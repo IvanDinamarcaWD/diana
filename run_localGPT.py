@@ -89,7 +89,6 @@ def load_model(device_type, model_id, model_basename=None, LOGGING=logging):
         repetition_penalty=1.15,
         generation_config=generation_config,
         num_return_sequences=1,
-        repetition_penalty=1.15,
     )
 
     local_llm = HuggingFacePipeline(pipeline=pipe)
