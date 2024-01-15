@@ -100,12 +100,15 @@ def load_quantized_model_qptq(model_id, model_basename, device_type, logging):
         # Remove the ".safetensors" ending if present
         model_basename = model_basename.replace(".safetensors", "")
 
-    model = AutoModelForCausalLM.from_pretrained(model_id,
+
+    model_name_or_path = "TheBloke/dolphin-2.2.1-mistral-7B-GPTQ"
+
+    model = AutoModelForCausalLM.from_pretrained(model_name_or_path,
                                              device_map="auto",
                                              trust_remote_code=False,
                                              revision="main")
 
-    tokenizer = AutoTokenizer.from_pretrained(model_basename, use_fast=True)
+    tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, use_fast=True)
 
     return model, tokenizer
 
