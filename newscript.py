@@ -132,7 +132,7 @@ def main(device_type, show_sources, use_history, model_type, save_qa):
         #"verbose": True
     }
 
-    model_name_or_path = "TheBloke/Mistral-7B-Instruct-v0.1-GPTQ"
+    model_name_or_path = "TheBloke/Mistral-7B-v0.1-GPTQ"
 
     llm = AutoModelForCausalLM.from_pretrained(model_name_or_path,
                                              device_map="auto",
