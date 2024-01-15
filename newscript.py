@@ -14,6 +14,7 @@ from langchain.llms import LlamaCpp
 from langchain.chains import VectorDBQA
 #callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
 from langchain.prompts import PromptTemplate
+from transformers import AutoModelForCausalLM, AutoTokenizer, LlamaForCausalLM, LlamaTokenizer
 
 from prompt_template_utils import get_prompt_template
 
@@ -48,7 +49,7 @@ from constants import (
 @click.command()
 @click.option(
     "--device_type",
-    default="mps" if torch.cuda.is_available() else "cpu",
+    default="cuda" if torch.cuda.is_available() else "cpu",
     type=click.Choice(
         [
             "cpu",
@@ -131,9 +132,20 @@ def main(device_type, show_sources, use_history, model_type, save_qa):
         #"verbose": True
     }
 
-    llm =  LlamaCpp(callback_manager=callback_manager,**kwargs)
+    model_name_or_path = "TheBloke/dolphin-2.2.1-mistral-7B-GPTQ"
 
-    llm.streaming = True
+    llm = AutoModelForCausalLM.from_pretrained(model_name_or_path,
+                                             device_map="auto",
+                                             trust_remote_code=False,
+                                             revision="main")
+
+    tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, use_fast=True)
+
+    #return model, tokenizer
+
+    #llm =  LlamaCpp(callback_manager=callback_manager,**kwargs)
+
+    #llm.streaming = True
 
 
     # get the prompt template and memory if set by the user.
