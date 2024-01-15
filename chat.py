@@ -20,7 +20,7 @@ from constants import (
 
 
 MODEL_ID = "TheBloke/Mistral-7B-Instruct-v0.1-GGUF"
-MODEL_BASENAME = "mistral-7b-instruct-v0.1.Q2_K.gguf"
+MODEL_BASENAME = "mistral-7b-instruct-v0.1.Q8_0.gguf"
 
 CONTEXT_WINDOW_SIZE = 4096
 MAX_NEW_TOKENS = CONTEXT_WINDOW_SIZE
