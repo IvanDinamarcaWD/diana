@@ -88,6 +88,9 @@ def load_model(device_type, model_id, model_basename=None, LOGGING=logging):
         # top_p=0.95,
         repetition_penalty=1.15,
         generation_config=generation_config,
+        tokenizer=tokenizer.eos_token_id,
+        num_return_sequences=1,
+        repetition_penalty=1.15,
     )
 
     local_llm = HuggingFacePipeline(pipeline=pipe)
