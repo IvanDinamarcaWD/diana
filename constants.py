@@ -103,7 +103,7 @@ EMBEDDING_MODEL_NAME = "hkunlp/instructor-large"  # Uses 1.5 GB of VRAM (High Ac
 #MODEL_ID = "TheBloke/Llama-2-7b-Chat-GGUF"
 #MODEL_BASENAME = "llama-2-7b-chat.Q4_K_M.gguf"
 
-MODEL_ID = "TheBloke/Falcon-7B-Instruct-GPTQ"
+MODEL_ID = "TheBloke/Mistral-7B-v0.1-GPTQ"
 MODEL_BASENAME = "model.safetensors"
 
 
