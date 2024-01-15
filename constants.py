@@ -134,7 +134,7 @@ EMBEDDING_MODEL_NAME = "hkunlp/instructor-large"  # Uses 1.5 GB of VRAM (High Ac
 ##### 48GB VRAM Graphics Cards (RTX 6000, RTX A6000 and other 48GB VRAM GPUs) #####
 
 ### 65b GPTQ LLM Models for 48GB GPUs (*** With best embedding model: hkunlp/instructor-xl ***)
-MODEL_ID = "TheBloke/dolphin-2.2.1-mistral-7B-GPTQ"
+MODEL_ID = "TheBloke/Mistral-7B-Instruct-v0.1-GPTQ"
 MODEL_BASENAME = "model.safetensors"
 # MODEL_ID = "TheBloke/Airoboros-65B-GPT4-2.0-GPTQ"
 # MODEL_BASENAME = "model.safetensors"
