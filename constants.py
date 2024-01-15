@@ -103,8 +103,8 @@ EMBEDDING_MODEL_NAME = "hkunlp/instructor-large"  # Uses 1.5 GB of VRAM (High Ac
 #MODEL_ID = "TheBloke/Llama-2-7b-Chat-GGUF"
 #MODEL_BASENAME = "llama-2-7b-chat.Q4_K_M.gguf"
 
-MODEL_ID = "TheBloke/samantha-falcon-7B-GPTQ"
-MODEL_BASENAME = "model.safetensors"
+#MODEL_ID = "TheBloke/samantha-falcon-7B-GPTQ"
+#MODEL_BASENAME = "model.safetensors"
 
 
 #MODEL_ID = "TheBloke/Mistral-7B-Instruct-v0.1-GGUF"
@@ -134,8 +134,8 @@ MODEL_BASENAME = "model.safetensors"
 ##### 48GB VRAM Graphics Cards (RTX 6000, RTX A6000 and other 48GB VRAM GPUs) #####
 
 ### 65b GPTQ LLM Models for 48GB GPUs (*** With best embedding model: hkunlp/instructor-xl ***)
-# MODEL_ID = "TheBloke/guanaco-65B-GPTQ"
-# MODEL_BASENAME = "model.safetensors"
+MODEL_ID = "TheBloke/guanaco-65B-GPTQ"
+MODEL_BASENAME = "model.safetensors"
 # MODEL_ID = "TheBloke/Airoboros-65B-GPT4-2.0-GPTQ"
 # MODEL_BASENAME = "model.safetensors"
 # MODEL_ID = "TheBloke/gpt4-alpaca-lora_mlp-65B-GPTQ"
