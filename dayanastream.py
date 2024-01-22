@@ -1,6 +1,12 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer
-from transformers import pipeline
+from langchain.vectorstores import Chroma
+from langchain.embeddings import HuggingFaceInstructEmbeddings
 
+from constants import (
+    EMBEDDING_MODEL_NAME,
+    PERSIST_DIRECTORY,
+    CHROMA_SETTINGS
+)
 model_name_or_path = "TheBloke/Mistral-7B-Instruct-v0.2-AWQ"
 
 tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
@@ -13,13 +19,33 @@ model = AutoModelForCausalLM.from_pretrained(
 # Using the text streamer to stream output one token at a time
 streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
 
-prompt = "Tell me about AI"
+
+
+embeddings = HuggingFaceInstructEmbeddings(model_name=EMBEDDING_MODEL_NAME, model_kwargs={"device": "cuda"})
+# uncomment the following line if you used HuggingFaceEmbeddings in the ingest.py
+# embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
+
+# load the vectorstore
+db = Chroma(
+    persist_directory=PERSIST_DIRECTORY,
+    embedding_function=embeddings,
+    client_settings=CHROMA_SETTINGS
+)
+retriever = db.as_retriever()
+
+
+
+prompt = "¿Qué sabes del documento?"
 prompt_template=f'''<s>[INST] {prompt} [/INST]
 '''
+retrieved_context = retriever.retrieve(prompt)
+
+combined_prompt = f'<s>[INST] {prompt} [/INST] {retrieved_context}'
+
 
 # Convert prompt to tokens
 tokens = tokenizer(
-    prompt_template,
+    combined_prompt,
     return_tensors='pt'
 ).input_ids.cuda()
 
@@ -39,25 +65,8 @@ generation_output = model.generate(
     **generation_params
 )
 
-# Generation without a streamer, which will include the prompt in the output
-generation_output = model.generate(
-    tokens,
-    **generation_params
-)
-
 # Get the tokens from the output, decode them, print them
 token_output = generation_output[0]
 text_output = tokenizer.decode(token_output)
 print("model.generate output: ", text_output)
 
-# Inference is also possible via Transformers' pipeline
-
-pipe = pipeline(
-    "text-generation",
-    model=model,
-    tokenizer=tokenizer,
-    **generation_params
-)
-
-pipe_output = pipe(prompt_template)[0]['generated_text']
-print("pipeline output: ", pipe_output)
