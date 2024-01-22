@@ -23,9 +23,16 @@ model_name_or_path = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
 model = AutoModelForCausalLM.from_pretrained(model_name_or_path,
                                              device_map="auto",
                                              trust_remote_code=False,
-                                             revision="main")
+                                             revision="main",
+                                             eos_token_id =2,
 
-tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, use_fast=True)
+
+                                             )
+
+tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, use_fast=True,
+                                             eos_token_id =2,
+                                          
+                                          )
 
 pipe = pipeline(
     "text-generation",
