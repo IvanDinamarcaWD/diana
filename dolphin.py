@@ -8,11 +8,18 @@ model = AutoModelForCausalLM.from_pretrained(model_name_or_path,
                                              trust_remote_code=False,
                                              revision="main")
 
+
+system_prompt = """Eres un asistente útil llamado Dayana, utilizarás el contexto proporcionado para responder preguntas de los usuarios. 
+Lee el contexto dado antes de responder preguntas y piensa paso a paso. 
+Si no puedes responder una pregunta del usuario basándote en el contexto proporcionado, 
+informa al usuario. No utilices ninguna otra información para responder al usuario. Proporciona una respuesta detallada a la pregunta. Responde siempre en español."""
+
+
 tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, use_fast=True)
 
 prompt = input("\nEnter a query: ")
 
-prompt_template=f'''<s>[INST] {prompt} [/INST]
+prompt_template=f'''<s>[INST]{system_prompt} {prompt} [/INST]
 '''
 
 print("\n\n*** Generate:")
