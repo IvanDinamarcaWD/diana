@@ -33,7 +33,7 @@ pipe = pipeline(
     "text-generation",
     model=model,
     tokenizer=tokenizer,
-    max_new_tokens=512,
+    max_new_tokens=4096,
     do_sample=True,
     temperature=0.1,
     top_p=0.95,
@@ -64,7 +64,8 @@ qa = RetrievalQA.from_chain_type(
     chain_type="stuff",  # try other chains types as well. refine, map_reduce, map_rerank
     retriever=retriever,
     return_source_documents=True,  
-    verbose=True,
+    #verbose=True,
+    #streaming: True,
     callbacks=callback_manager,
     chain_type_kwargs={
         "prompt": prompt,
@@ -84,5 +85,5 @@ while True:
     print("\n\n> Question:")
     print(query)
     print("\n> Answer:")
-    #print(answer)
+    print(answer)
     
