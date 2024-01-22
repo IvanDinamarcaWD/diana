@@ -7,6 +7,7 @@ from prompt_template_utils import get_prompt_template
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler  # for streaming response
 from langchain.callbacks.manager import CallbackManager
 from prompt_template_utils import get_prompt_template
+import time
 
 from constants import (
     EMBEDDING_MODEL_NAME,
@@ -69,8 +70,11 @@ qa = RetrievalQA.from_chain_type(
         "prompt": prompt,
     },
 )
+start_time = 0
 
 while True:
+    start_time = time.time()
+
     query = input("\nEnter a query: ")
 
     #for text in qa.stream(query, stop=["Q:"]):
@@ -88,4 +92,10 @@ while True:
     print(query)
     print("\n> Answer:")
     print(answer)
+    end_time = time.time()
+
+    elapsed_time = end_time - start_time
+    print("Tiempo: {elapsed_time} segundos")
+
+
     
