@@ -35,7 +35,7 @@ pipe = pipeline(
     tokenizer=tokenizer,
     max_new_tokens=512,
     do_sample=True,
-    temperature=0.7,
+    temperature=0.1,
     top_p=0.95,
     top_k=40,
     repetition_penalty=1.1
@@ -63,7 +63,8 @@ qa = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff",  # try other chains types as well. refine, map_reduce, map_rerank
     retriever=retriever,
-    return_source_documents=True,  # verbose=True,
+    return_source_documents=True,  
+    verbose=True,
     callbacks=callback_manager,
     chain_type_kwargs={
         "prompt": prompt,
@@ -73,14 +74,11 @@ qa = RetrievalQA.from_chain_type(
 while True:
     query = input("\nEnter a query: ")
 
-    print("\n\nEvaluating the prompt...\n\n");
-    for text in qa.stream(query, stop=["Q:"]):
-        print(text)
-    #if query == "exit":
-        #break
+    if query == "exit":
+        break
     # Get the answer from the chain
-    #res = qa(query)
-    #answer, docs = res["result"], res["source_documents"]
+    res = qa(query)
+    answer, docs = res["result"], res["source_documents"]
 
     # Print the result
     print("\n\n> Question:")
