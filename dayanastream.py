@@ -77,7 +77,7 @@ generation_params = {
 
 
 while True:
-    query = input("Pregunta")
+    query = input("\nEnter a query: ")
     res = qa(query)
 
     # Convert prompt to tokens
