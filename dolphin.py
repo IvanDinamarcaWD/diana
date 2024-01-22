@@ -73,9 +73,9 @@ qa = RetrievalQA.from_chain_type(
 start_time = 0
 
 while True:
-    start_time = time.time()
 
     query = input("\nEnter a query: ")
+    start_time = time.time()
 
     #for text in qa.stream(query, stop=["Q:"]):
     #        print(text)
