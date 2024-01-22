@@ -17,7 +17,7 @@ from constants import (
 callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
 
 
-model_name_or_path = "mistralai/Mistral-7B-Instruct-v0.1"
+model_name_or_path = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
 
 
 # To use a different branch, change revision
