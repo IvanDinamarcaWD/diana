@@ -37,12 +37,6 @@ db = Chroma(
 )
 retriever = db.as_retriever()
 
-prompt, memory = get_prompt_template(promptTemplate_type="llama", history=False)
-
-prompt = "Tell me about AI"
-prompt_template=f'''<s>[INST] {prompt} [/INST]
-'''
-
 pipe = pipeline(
     "text-generation",
     model=model,
@@ -54,7 +48,7 @@ pipe = pipeline(
     top_k=40,
     repetition_penalty=1.1
 )
-
+prompt, memory = get_prompt_template(promptTemplate_type="llama", history=False)
 
 llm = HuggingFacePipeline(pipeline=pipe)
 
