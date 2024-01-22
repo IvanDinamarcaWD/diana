@@ -45,7 +45,6 @@ generation_output = model.generate(
     **generation_params
 )
 
-
 # Get the tokens from the output, decode them, print them
 token_output = generation_output[0]
 text_output = tokenizer.decode(token_output)
@@ -53,10 +52,4 @@ print("model.generate output: ", text_output)
 
 # Inference is also possible via Transformers' pipeline
 
-pipe = pipeline(
-    "text-generation",
-    model=model,
-    tokenizer=tokenizer,
-    **generation_params
-)
 
