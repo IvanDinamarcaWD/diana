@@ -21,4 +21,4 @@ db = Chroma(
 )
 retriever = db.as_retriever()
 
-print(retriever.get_relevant_documents())
+print(retriever.get_relevant_documents(query=""))
