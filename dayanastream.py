@@ -1,20 +1,4 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer
-from transformers import pipeline
-from prompt_template_utils import get_prompt_template
-from langchain.vectorstores import Chroma
-from langchain.embeddings import HuggingFaceInstructEmbeddings
-from constants import (
-    EMBEDDING_MODEL_NAME,
-    PERSIST_DIRECTORY,
-    CHROMA_SETTINGS
-)
-from langchain.chains import RetrievalQA
-from langchain.llms import HuggingFacePipeline
-
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler  # for streaming response
-from langchain.callbacks.manager import CallbackManager
-
-callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
 
 model_name_or_path = "TheBloke/Mistral-7B-Instruct-v0.2-AWQ"
 
@@ -27,88 +11,53 @@ model = AutoModelForCausalLM.from_pretrained(
 
 # Using the text streamer to stream output one token at a time
 streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
-prompt, memory = get_prompt_template(promptTemplate_type="llama", history=False)
 
+prompt = "Tell me about AI"
+prompt_template=f'''<s>[INST] {prompt} [/INST]
+'''
 
-embeddings = HuggingFaceInstructEmbeddings(model_name=EMBEDDING_MODEL_NAME, model_kwargs={"device": "cuda"})
-# uncomment the following line if you used HuggingFaceEmbeddings in the ingest.py
-# embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
-
-# load the vectorstore
-db = Chroma(
-    persist_directory=PERSIST_DIRECTORY,
-    embedding_function=embeddings,
-    client_settings=CHROMA_SETTINGS
-)
-retriever = db.as_retriever()
+# Convert prompt to tokens
+tokens = tokenizer(
+    prompt_template,
+    return_tensors='pt'
+).input_ids.cuda()
 
 generation_params = {
-        "do_sample": True,
-        "temperature": 0.7,
-        "top_p": 0.95,
-        "top_k": 40,
-        "max_new_tokens": 512,
-        "repetition_penalty": 1.1
-    }
-    
-pipe = pipeline(
-        "text-generation",
-        model=model,
-        tokenizer=tokenizer,
-        **generation_params
-    )
+    "do_sample": True,
+    "temperature": 0.7,
+    "top_p": 0.95,
+    "top_k": 40,
+    "max_new_tokens": 512,
+    "repetition_penalty": 1.1
+}
 
-llm = HuggingFacePipeline(pipeline=pipe)
-
-qa = RetrievalQA.from_chain_type(
-    llm=llm,
-    chain_type="stuff",  # try other chains types as well. refine, map_reduce, map_rerank
-    retriever=retriever,
-    return_source_documents=True,  
-    #verbose=True,
-    #streaming: True,
-    callbacks=callback_manager,
-    chain_type_kwargs={
-        "prompt": prompt,
-    },
+# Generate streamed output, visible one token at a time
+generation_output = model.generate(
+    tokens,
+    streamer=streamer,
+    **generation_params
 )
 
+# Generation without a streamer, which will include the prompt in the output
+generation_output = model.generate(
+    tokens,
+    **generation_params
+)
 
-while True:
-        
-    #prompt =  "Tell me about AI"
-    query = input("\nEnter a query: ")
-    res = qa(query)
+# Get the tokens from the output, decode them, print them
+token_output = generation_output[0]
+text_output = tokenizer.decode(token_output)
+print("model.generate output: ", text_output)
 
-    # Convert prompt to tokens
-    tokens = tokenizer(
-        prompt,
-        return_tensors='pt'
-    ).input_ids.cuda()
+# Inference is also possible via Transformers' pipeline
+from transformers import pipeline
 
-    
+pipe = pipeline(
+    "text-generation",
+    model=model,
+    tokenizer=tokenizer,
+    **generation_params
+)
 
-    # Generate streamed output, visible one token at a time
-    generation_output = model.generate(
-        tokens,
-        streamer=streamer,
-        **generation_params
-    )
-
-    # Generation without a streamer, which will include the prompt in the output
-    generation_output = model.generate(
-        tokens,
-        **generation_params
-    )
-
-    # Get the tokens from the output, decode them, print them
-    token_output = generation_output[0]
-    text_output = tokenizer.decode(token_output)
-    print("model.generate output: ", text_output)
-
-    # Inference is also possible via Transformers' pipeline
-
-    
-
-    #pipe_output = pipe(prompt_template)[0]['generated_text']
-    #print("pipeline output: ", pipe_output)
+pipe_output = pipe(prompt_template)[0]['generated_text']
+#print("pipeline output: ", pipe_output)
