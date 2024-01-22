@@ -95,7 +95,7 @@ while True:
     end_time = time.time()
 
     elapsed_time = end_time - start_time
-    print("Tiempo: {elapsed_time} segundos")
+    print(elapsed_time)
 
 
     
