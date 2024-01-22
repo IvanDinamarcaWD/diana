@@ -1,6 +1,6 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
-model_name_or_path = "TheBloke/dolphin-2.2.1-mistral-7B-GPTQ"
+model_name_or_path = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
 # To use a different branch, change revision
 # For example: revision="gptq-4bit-32g-actorder_True"
 model = AutoModelForCausalLM.from_pretrained(model_name_or_path,
@@ -9,12 +9,10 @@ model = AutoModelForCausalLM.from_pretrained(model_name_or_path,
                                              revision="main")
 
 tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, use_fast=True)
+
 prompt = input("\nEnter a query: ")
 
-prompt_template=f'''<|im_start|>system<|im_end|>
-<|im_start|>user
-{prompt}<|im_end|>
-<|im_start|>assistant
+prompt_template=f'''<s>[INST] {prompt} [/INST]
 '''
 
 print("\n\n*** Generate:")
