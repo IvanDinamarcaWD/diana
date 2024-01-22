@@ -56,7 +56,7 @@ retriever = db.as_retriever()
 # get the prompt template and memory if set by the user.
 prompt, memory = get_prompt_template(promptTemplate_type="llama", history=False)
 
-
+#
 llm = HuggingFacePipeline(pipeline=pipe)
 
 qa = RetrievalQA.from_chain_type(
