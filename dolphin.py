@@ -1,4 +1,21 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+from langchain.llms import HuggingFacePipeline
+from langchain.chains import RetrievalQA
+from langchain.embeddings import HuggingFaceInstructEmbeddings
+from langchain.vectorstores import Chroma
+from prompt_template_utils import get_prompt_template
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler  # for streaming response
+from langchain.callbacks.manager import CallbackManager
+from prompt_template_utils import get_prompt_template
+
+from constants import (
+    EMBEDDING_MODEL_NAME,
+    PERSIST_DIRECTORY,
+    CHROMA_SETTINGS
+)
+
+callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+
 
 model_name_or_path = "mistralai/Mistral-7B-Instruct-v0.1"
 
@@ -12,27 +29,6 @@ model = AutoModelForCausalLM.from_pretrained(model_name_or_path,
 
 tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, use_fast=True)
 
-
-prompt = input("\nEnter a query: ")
-
-system_prompt = """Eres un asistente útil llamado Dayana, utilizarás el contexto proporcionado para responder preguntas de los usuarios. 
-Lee el contexto dado antes de responder preguntas y piensa paso a paso. 
-Si no puedes responder una pregunta del usuario basándote en el contexto proporcionado, 
-informa al usuario. No utilices ninguna otra información para responder al usuario. Proporciona una respuesta detallada a la pregunta. Responde siempre en español."""
-
-
-prompt_template=f'''<s>[INST]${system_prompt} {prompt} [/INST]
-'''
-
-print("\n\n*** Generate:")
-
-input_ids = tokenizer(prompt_template, return_tensors='pt').input_ids.cuda()
-output = model.generate(inputs=input_ids, temperature=0.7, do_sample=True, top_p=0.95, top_k=40, max_new_tokens=512)
-#print(tokenizer.decode(output[0]))
-
-# Inference can also be done using transformers' pipeline
-
-print("*** Pipeline:")
 pipe = pipeline(
     "text-generation",
     model=model,
@@ -45,4 +41,46 @@ pipe = pipeline(
     repetition_penalty=1.1
 )
 
-print(pipe(prompt_template)[0]['generated_text'])
+embeddings = HuggingFaceInstructEmbeddings(model_name=EMBEDDING_MODEL_NAME, model_kwargs={"device": "cuda"})
+# uncomment the following line if you used HuggingFaceEmbeddings in the ingest.py
+# embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
+
+# load the vectorstore
+db = Chroma(
+    persist_directory=PERSIST_DIRECTORY,
+    embedding_function=embeddings,
+    client_settings=CHROMA_SETTINGS
+)
+retriever = db.as_retriever()
+
+# get the prompt template and memory if set by the user.
+prompt, memory = get_prompt_template(promptTemplate_type="llama", history=False)
+
+
+llm = HuggingFacePipeline(pipeline=pipe)
+
+qa = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",  # try other chains types as well. refine, map_reduce, map_rerank
+    retriever=retriever,
+    return_source_documents=True,  # verbose=True,
+    callbacks=callback_manager,
+    chain_type_kwargs={
+        "prompt": prompt,
+    },
+)
+
+while True:
+    query = input("\nEnter a query: ")
+    if query == "exit":
+        break
+    # Get the answer from the chain
+    res = qa(query)
+    answer, docs = res["result"], res["source_documents"]
+
+    # Print the result
+    print("\n\n> Question:")
+    print(query)
+    print("\n> Answer:")
+    print(answer)
+    
