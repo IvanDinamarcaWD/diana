@@ -72,15 +72,19 @@ qa = RetrievalQA.from_chain_type(
 
 while True:
     query = input("\nEnter a query: ")
-    if query == "exit":
-        break
+
+    print("\n\nEvaluating the prompt...\n\n");
+    for text in qa.stream(query, stop=["Q:"]):
+        print(text)
+    #if query == "exit":
+        #break
     # Get the answer from the chain
-    res = qa(query)
-    answer, docs = res["result"], res["source_documents"]
+    #res = qa(query)
+    #answer, docs = res["result"], res["source_documents"]
 
     # Print the result
     print("\n\n> Question:")
     print(query)
     print("\n> Answer:")
-    print(answer)
+    #print(answer)
     
