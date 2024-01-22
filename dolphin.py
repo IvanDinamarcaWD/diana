@@ -17,7 +17,7 @@ from constants import (
 
 callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
 
-model_name_or_path = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
+model_name_or_path = "TheBloke/Mistral-7B-Instruct-v0.2-AWQ"
 
 # To use a different branch, change revision
 # For example: revision="gptq-4bit-32g-actorder_True"
