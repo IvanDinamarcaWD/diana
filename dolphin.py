@@ -12,7 +12,9 @@ model = AutoModelForCausalLM.from_pretrained(model_name_or_path,
 
 tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, use_fast=True)
 
-prompt = "Tell me about AI"
+
+prompt = input("\nEnter a query: ")
+
 system_prompt = """Eres un asistente útil llamado Dayana, utilizarás el contexto proporcionado para responder preguntas de los usuarios. 
 Lee el contexto dado antes de responder preguntas y piensa paso a paso. 
 Si no puedes responder una pregunta del usuario basándote en el contexto proporcionado, 
