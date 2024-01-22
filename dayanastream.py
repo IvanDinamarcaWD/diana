@@ -71,12 +71,6 @@ qa = RetrievalQA.from_chain_type(
     },
 )
 
-# Convert prompt to tokens
-tokens = tokenizer(
-    query,
-    return_tensors='pt'
-).input_ids.cuda()
-
 generation_params = {
     "do_sample": True,
     "temperature": 0.7,
@@ -86,18 +80,25 @@ generation_params = {
     "repetition_penalty": 1.1
 }
 
-# Generate streamed output, visible one token at a time
-generation_output = model.generate(
-    tokens,
-    streamer=streamer,
-    **generation_params
-)
 
 
 while True:
     query = input("Pregunta")
     res = qa(query)
 
+    # Convert prompt to tokens
+    tokens = tokenizer(
+        query,
+        return_tensors='pt'
+    ).input_ids.cuda()
+
+
+    # Generate streamed output, visible one token at a time
+    generation_output = model.generate(
+        tokens,
+        streamer=streamer,
+        **generation_params
+    )
     # Get the tokens from the output, decode them, print them
     token_output = generation_output[0]
     text_output = tokenizer.decode(token_output)
