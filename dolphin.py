@@ -1,10 +1,8 @@
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
-#model_name_or_path = "TheBloke/Mixtral-8x7B-Instruct-v0.1-GPTQ"
 model_name_or_path = "TheBloke/dolphin-2.2.1-mistral-7B-GPTQ"
-
 # To use a different branch, change revision
-# For example: revision="gptq-4bit-128g-actorder_True"
+# For example: revision="gptq-4bit-32g-actorder_True"
 model = AutoModelForCausalLM.from_pretrained(model_name_or_path,
                                              device_map="auto",
                                              trust_remote_code=False,
@@ -12,11 +10,11 @@ model = AutoModelForCausalLM.from_pretrained(model_name_or_path,
 
 tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, use_fast=True)
 
-#prompt = "Write a story about llamas"
-prompt = input("\nEnter a query: ")
-
-system_message = "You are a story writing assistant"
-prompt_template=f'''[INST] {prompt} [/INST]
+prompt = "Tell me about AI"
+prompt_template=f'''<|im_start|>system<|im_end|>
+<|im_start|>user
+{prompt}<|im_end|>
+<|im_start|>assistant
 '''
 
 print("\n\n*** Generate:")
