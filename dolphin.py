@@ -9,8 +9,8 @@ model = AutoModelForCausalLM.from_pretrained(model_name_or_path,
                                              revision="main")
 
 tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, use_fast=True)
+prompt = input("\nEnter a query: ")
 
-prompt = "Tell me about AI"
 prompt_template=f'''<|im_start|>system<|im_end|>
 <|im_start|>user
 {prompt}<|im_end|>
