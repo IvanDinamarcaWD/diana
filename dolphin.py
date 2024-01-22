@@ -16,9 +16,7 @@ from constants import (
 
 callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
 
-
 model_name_or_path = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
-
 
 # To use a different branch, change revision
 # For example: revision="gptq-4bit-32g-actorder_True"
@@ -26,6 +24,7 @@ model = AutoModelForCausalLM.from_pretrained(model_name_or_path,
                                              device_map="auto",
                                              trust_remote_code=False,
                                              revision="main")
+model.streaming = True
 
 tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, use_fast=True)
 
@@ -75,15 +74,19 @@ qa = RetrievalQA.from_chain_type(
 while True:
     query = input("\nEnter a query: ")
 
-    if query == "exit":
-        break
+    for text in qa.stream(query, stop=["Q:"]):
+            print(text)
+
+    #
+    #if query == "exit":
+        #break
     # Get the answer from the chain
-    res = qa(query)
-    answer, docs = res["result"], res["source_documents"]
+    #res = qa(query)
+    #answer, docs = res["result"], res["source_documents"]
 
     # Print the result
-    print("\n\n> Question:")
-    print(query)
-    print("\n> Answer:")
-    print(answer)
+    #print("\n\n> Question:")
+    #print(query)
+    #print("\n> Answer:")
+    #print(answer)
     
