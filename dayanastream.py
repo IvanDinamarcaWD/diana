@@ -1,5 +1,6 @@
 from prompt_template_utils import get_prompt_template
 from transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer
+from transformers import pipeline
 
 model_name_or_path = "TheBloke/Mistral-7B-Instruct-v0.2-AWQ"
 
@@ -17,6 +18,10 @@ streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
 #prompt = "Tell me about AI"
 #prompt_template=f'''<s>[INST] {prompt} [/INST]
 #'''
+
+prompt = "Tell me about AI"
+prompt_template=f'''<s>[INST] {prompt} [/INST]
+'''
 
 # Convert prompt to tokens
 tokens = tokenizer(
@@ -40,11 +45,6 @@ generation_output = model.generate(
     **generation_params
 )
 
-# Generation without a streamer, which will include the prompt in the output
-generation_output = model.generate(
-    tokens,
-    **generation_params
-)
 
 # Get the tokens from the output, decode them, print them
 token_output = generation_output[0]
@@ -52,7 +52,6 @@ text_output = tokenizer.decode(token_output)
 print("model.generate output: ", text_output)
 
 # Inference is also possible via Transformers' pipeline
-from transformers import pipeline
 
 pipe = pipeline(
     "text-generation",
@@ -61,5 +60,3 @@ pipe = pipeline(
     **generation_params
 )
 
-#pipe_output = pipe(prompt_template)[0]['generated_text']
-#print("pipeline output: ", pipe_output)
