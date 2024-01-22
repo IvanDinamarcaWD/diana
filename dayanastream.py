@@ -1,3 +1,4 @@
+from prompt_template_utils import get_prompt_template
 from transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer
 
 model_name_or_path = "TheBloke/Mistral-7B-Instruct-v0.2-AWQ"
@@ -8,17 +9,18 @@ model = AutoModelForCausalLM.from_pretrained(
     low_cpu_mem_usage=True,
     device_map="cuda:0"
 )
+prompt, memory = get_prompt_template(promptTemplate_type="llama", history=False)
 
 # Using the text streamer to stream output one token at a time
 streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
 
-prompt = "Tell me about AI"
-prompt_template=f'''<s>[INST] {prompt} [/INST]
-'''
+#prompt = "Tell me about AI"
+#prompt_template=f'''<s>[INST] {prompt} [/INST]
+#'''
 
 # Convert prompt to tokens
 tokens = tokenizer(
-    prompt_template,
+    prompt,
     return_tensors='pt'
 ).input_ids.cuda()
 
@@ -59,5 +61,5 @@ pipe = pipeline(
     **generation_params
 )
 
-pipe_output = pipe(prompt_template)[0]['generated_text']
+#pipe_output = pipe(prompt_template)[0]['generated_text']
 #print("pipeline output: ", pipe_output)
