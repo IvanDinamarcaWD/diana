@@ -24,7 +24,6 @@ model = AutoModelForCausalLM.from_pretrained(model_name_or_path,
                                              device_map="auto",
                                              trust_remote_code=False,
                                              revision="main")
-model.streaming = True
 
 tokenizer = AutoTokenizer.from_pretrained(model_name_or_path, use_fast=True)
 
