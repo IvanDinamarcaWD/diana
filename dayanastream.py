@@ -77,7 +77,8 @@ qa = RetrievalQA.from_chain_type(
 while True:
         
     #prompt =  "Tell me about AI"
-    prompt = input("\nEnter a query: ")
+    query = input("\nEnter a query: ")
+    res = qa(query)
 
     # Convert prompt to tokens
     tokens = tokenizer(
@@ -109,5 +110,5 @@ while True:
 
     
 
-    pipe_output = pipe(prompt_template)[0]['generated_text']
-    print("pipeline output: ", pipe_output)
+    #pipe_output = pipe(prompt_template)[0]['generated_text']
+    #print("pipeline output: ", pipe_output)
