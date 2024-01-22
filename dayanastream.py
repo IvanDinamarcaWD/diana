@@ -36,9 +36,10 @@ retriever = db.as_retriever()
 prompt = "¿Qué sabes del documento?"
 prompt_template=f'''<s>[INST] {prompt} [/INST]
 '''
-retrieved_context = retriever.get_documents(prompt)
+retrieved_documents = retriever.query(prompt)
 
-combined_prompt = f'<s>[INST] {prompt} [/INST] {retrieved_context}'
+#combined_prompt = f'<s>[INST] {prompt} [/INST] {retrieved_context}'
+combined_prompt = f'<s>[INST] {prompt} [/INST] {" ".join(retrieved_documents)}'
 
 
 # Convert prompt to tokens
