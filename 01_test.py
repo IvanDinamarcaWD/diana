@@ -12,7 +12,7 @@ from langchain.llms import HuggingFacePipeline
 import os
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler  # for streaming response
 from langchain.callbacks.manager import CallbackManager
-
+import time
 
 from constants import (
     CHROMA_SETTINGS,
@@ -111,11 +111,19 @@ qa = RetrievalQA.from_chain_type(
 )
 
 #user_question = "¿Qué sabes del documento?"
+start_time = 0
+
+
 user_question = input("\nEnter a query: ")
+start_time = time.time()
 qa_chain_response = qa.stream(
   {"query": user_question},
 )
+
+
 for i in qa_chain_response:
-    print('done')
+    end_time = time.time()
+
+    print(end_time)
     #print("TOKEN", i["result"])
 
