@@ -134,7 +134,7 @@ EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2" # Uses 0.2 GB of VRAM (Less accurate b
 ##### 48GB VRAM Graphics Cards (RTX 6000, RTX A6000 and other 48GB VRAM GPUs) #####
 
 ### 65b GPTQ LLM Models for 48GB GPUs (*** With best embedding model: hkunlp/instructor-xl ***)
-MODEL_ID = "TheBloke/Mistral-7B-Instruct-v0.2-AWQ"
+MODEL_ID = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
 MODEL_BASENAME = "model.safetensors.awq"
 # MODEL_ID = "TheBloke/Airoboros-65B-GPT4-2.0-GPTQ"
 # MODEL_BASENAME = "model.safetensors"
