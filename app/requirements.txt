@@ -1,0 +1,40 @@
+# Natural Language Processing
+langchain
+chromadb
+pdfminer.six
+InstructorEmbedding
+sentence-transformers
+faiss-cpu
+huggingface_hub
+docx2txt
+transformers
+autoawq; sys_platform != 'darwin'
+protobuf; 
+auto-gptq; sys_platform != 'darwin'
+unstructured
+unstructured[pdf]
+
+# Utilities
+urllib3
+bitsandbytes ; sys_platform != 'win32'
+bitsandbytes-windows ; sys_platform == 'win32'
+click
+flask
+fastapi
+uvicorn
+requests
+
+# Streamlit related
+streamlit
+Streamlit-extras
+
+# Excel File Manipulation
+openpyxl
+
+embeddings
+transformers
+accelerate
+llama-cpp-python
+auto-gptq
+optimum
+torch
