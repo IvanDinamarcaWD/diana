@@ -14,16 +14,26 @@ from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler 
 from langchain.callbacks.manager import CallbackManager
 
 
-model_name_or_path = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
-EMBEDDING_MODEL_NAME = "intfloat/e5-base-v2"  # Uses 1.5 GB of VRAM (High Accuracy with lower VRAM usage)
+from constants import (
+    CHROMA_SETTINGS,
+    DOCUMENT_MAP,
+    EMBEDDING_MODEL_NAME,
+    INGEST_THREADS,
+    PERSIST_DIRECTORY,
+    MODEL_ID,
+    SOURCE_DIRECTORY,
+)
+
+#model_name_or_path = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
+#EMBEDDING_MODEL_NAME = "intfloat/e5-base-v2"  # Uses 1.5 GB of VRAM (High Accuracy with lower VRAM usage)
 access_token = "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"
 
-tokenizer = AutoTokenizer.from_pretrained(model_name_or_path,
+tokenizer = AutoTokenizer.from_pretrained(MODEL_ID,
     token=access_token)
 
 
 model = AutoModelForCausalLM.from_pretrained(
-    model_name_or_path,
+    MODEL_ID,
     low_cpu_mem_usage=True,
     device_map="cuda:0",
     token=access_token
