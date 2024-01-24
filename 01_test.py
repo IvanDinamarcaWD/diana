@@ -1,31 +1,76 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer, pipeline
-from langchain.llms import HuggingFacePipeline
-from langchain.chains import RetrievalQA
+from langchain.docstore.document import Document
 from langchain.embeddings import HuggingFaceInstructEmbeddings
+from langchain.text_splitter import Language, RecursiveCharacterTextSplitter
 from langchain.vectorstores import Chroma
-from prompt_template_utils import get_prompt_template
+from transformers import AutoModelForCausalLM, AutoTokenizer, TextStreamer, Trainer
+from transformers import pipeline
+from chromadb.config import Settings
+from langchain.prompts import PromptTemplate
+from langchain.memory import ConversationBufferMemory
+from langchain.chains import RetrievalQA
+from langchain.llms import HuggingFacePipeline
+import os
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler  # for streaming response
 from langchain.callbacks.manager import CallbackManager
-from prompt_template_utils import get_prompt_template
-import time
 
-from constants import (
-    EMBEDDING_MODEL_NAME,
-    PERSIST_DIRECTORY,
-    CHROMA_SETTINGS
-)
 
 model_name_or_path = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
+access_token = "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"
 
-tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
+
+tokenizer = AutoTokenizer.from_pretrained(model_name_or_path,
+    token=access_token)
+
+
 model = AutoModelForCausalLM.from_pretrained(
     model_name_or_path,
     low_cpu_mem_usage=True,
-    device_map="cuda:0"
+    device_map="cuda:0",
+    token=access_token
 )
-callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
 
-# Using the text streamer to stream output one token at a time
+ROOT_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
+# Define the folder for storing database
+SOURCE_DIRECTORY = f"{ROOT_DIRECTORY}/SOURCE_DOCUMENTS"
+
+PERSIST_DIRECTORY = f"{ROOT_DIRECTORY}/DB"
+
+#PERSIST_DIRECTORY = f"/content/DB"
+EMBEDDING_MODEL_NAME = "intfloat/e5-base-v2"  # Uses 1.5 GB of VRAM (High Accuracy with lower VRAM usage)
+CHROMA_SETTINGS = Settings(
+    anonymized_telemetry=False,
+    is_persistent=True,
+)
+
+system_prompt = """Eres una asistente útil mujer llamado Dayana, utilizarás el contexto proporcionado para responder preguntas de los usuarios.
+Lee el contexto dado antes de responder preguntas y piensa paso a paso.
+Si no puedes responder una pregunta del usuario basándote en el contexto proporcionado,
+informa al usuario. No utilices ninguna otra información para responder al usuario. Proporciona una respuesta detallada a la pregunta. Responde siempre en español."""
+
+B_INST, E_INST = "[INST]", "[/INST]"
+B_SYS, E_SYS = "<<SYS>>\n", "\n<</SYS>>\n\n"
+SYSTEM_PROMPT = B_SYS + system_prompt + E_SYS
+
+instruction = """
+Context: {context}
+User: {question}"""
+
+prompt_template = B_INST + SYSTEM_PROMPT + instruction + E_INST
+prompt = PromptTemplate(input_variables=["context", "question"], template=prompt_template)
+memory = ConversationBufferMemory(input_key="question", memory_key="history")
+
+embeddings = HuggingFaceInstructEmbeddings(model_name=EMBEDDING_MODEL_NAME, model_kwargs={"device": "cuda"})
+# uncomment the following line if you used HuggingFaceEmbeddings in the ingest.py
+# embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
+
+db = Chroma(
+    persist_directory=PERSIST_DIRECTORY,
+    embedding_function=embeddings,
+    client_settings=CHROMA_SETTINGS
+)
+retriever = db.as_retriever()
+
+callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
 streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
 
 pipe = pipeline("text-generation",
@@ -41,16 +86,6 @@ pipe = pipeline("text-generation",
     eos_token_id=tokenizer.eos_token_id
 )
 
-embeddings = HuggingFaceInstructEmbeddings(model_name=EMBEDDING_MODEL_NAME, model_kwargs={"device": "cuda"})
-
-db = Chroma(
-    persist_directory=PERSIST_DIRECTORY,
-    embedding_function=embeddings,
-    client_settings=CHROMA_SETTINGS
-)
-
-retriever = db.as_retriever()
-prompt, memory = get_prompt_template(promptTemplate_type="llama", history=False)
 
 llm = HuggingFacePipeline(pipeline=pipe)
 
@@ -58,39 +93,18 @@ qa = RetrievalQA.from_chain_type(
     llm=llm,
     chain_type="stuff",  # try other chains types as well. refine, map_reduce, map_rerank
     retriever=retriever,
-    return_source_documents=True,  
+    return_source_documents=True,
     #verbose=True,
-    #streaming: True,
     callbacks=callback_manager,
     chain_type_kwargs={
         "prompt": prompt,
     },
 )
-start_time = 0
 
-while True:
-
-    query = input("\nEnter a query: ")
-    start_time = time.time()
-
-    #for text in qa.stream(query, stop=["Q:"]):
-    #        print(text)
-
-    #
-    if query == "exit":
-        break
-    # Get the answer from the chain
-    res = qa(query)
-    answer, docs = res["result"], res["source_documents"]
-
-    # Print the result
-    print("\n\n> Question:")
-    print(query)
-    print("\n> Answer:")
-    print(answer)
-    end_time = time.time()
-
-    elapsed_time = end_time - start_time
-    print(elapsed_time)
-
+user_question = "¿Qué sabes del documento?"
+qa_chain_response = qa.stream(
+  {"query": user_question},
+)
+for i in qa_chain_response:
+    print("TOKEN", i["result"])
 
