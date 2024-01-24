@@ -116,5 +116,6 @@ qa_chain_response = qa.stream(
   {"query": user_question},
 )
 for i in qa_chain_response:
-    print("TOKEN", i["result"])
+    print('done')
+    #print("TOKEN", i["result"])
 
