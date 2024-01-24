@@ -114,16 +114,16 @@ qa = RetrievalQA.from_chain_type(
 start_time = 0
 
 
-user_question = input("\nEnter a query: ")
-start_time = time.time()
-qa_chain_response = qa.stream(
-  {"query": user_question},
-)
+while True:
 
+    user_question = input("\nEnter a query: ")
+    start_time = time.time()
+    qa_chain_response = qa.stream(
+    {"query": user_question},
+    )
+    for i in qa_chain_response:
+        end_time = time.time()
 
-for i in qa_chain_response:
-    end_time = time.time()
-
-    print(end_time)
-    #print("TOKEN", i["result"])
+        print(end_time)
+        #print("TOKEN", i["result"])
 
