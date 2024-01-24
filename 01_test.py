@@ -101,7 +101,8 @@ qa = RetrievalQA.from_chain_type(
     },
 )
 
-user_question = "¿Qué sabes del documento?"
+#user_question = "¿Qué sabes del documento?"
+user_question = input("\nEnter a query: ")
 qa_chain_response = qa.stream(
   {"query": user_question},
 )
