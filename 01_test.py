@@ -15,8 +15,8 @@ from langchain.callbacks.manager import CallbackManager
 
 
 model_name_or_path = "TheBloke/Mistral-7B-Instruct-v0.2-GPTQ"
+EMBEDDING_MODEL_NAME = "intfloat/e5-base-v2"  # Uses 1.5 GB of VRAM (High Accuracy with lower VRAM usage)
 access_token = "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"
-
 
 tokenizer = AutoTokenizer.from_pretrained(model_name_or_path,
     token=access_token)
@@ -36,7 +36,6 @@ SOURCE_DIRECTORY = f"{ROOT_DIRECTORY}/SOURCE_DOCUMENTS"
 PERSIST_DIRECTORY = f"{ROOT_DIRECTORY}/DB"
 
 #PERSIST_DIRECTORY = f"/content/DB"
-EMBEDDING_MODEL_NAME = "intfloat/e5-base-v2"  # Uses 1.5 GB of VRAM (High Accuracy with lower VRAM usage)
 CHROMA_SETTINGS = Settings(
     anonymized_telemetry=False,
     is_persistent=True,
