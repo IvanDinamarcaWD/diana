@@ -124,7 +124,7 @@ async def newPrompt(user_question: str):
     )
 
     task = asyncio.create_task(
-        model.agenerate(messages=[[HumanMessage(content=user_question)]])
+        qa.agenerate(messages=[[HumanMessage(content=user_question)]])
     )
 
     try:
@@ -137,14 +137,13 @@ async def newPrompt(user_question: str):
 
     await task
 
-    return
 
 
-    qa_chain_response = qa.stream(
-        {"query": user_question},
-    )
-    return qa_chain_response
-    response = await qa.acall(user_question)
-    return response
+    #qa_chain_response = qa.stream(
+    #    {"query": user_question},
+    #)
+    #return qa_chain_response
+    #response = await qa.acall(user_question)
+    #return response
 
    
