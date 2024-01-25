@@ -72,7 +72,7 @@ async def newPrompt(user_question: str, stream_it: AsyncIteratorCallbackHandler)
     prompt = PromptTemplate(input_variables=["context", "question"], template=prompt_template)
     memory = ConversationBufferMemory(input_key="question", memory_key="history")
 
-    embeddings = HuggingFaceInstructEmbeddings(model_name=EMBEDDING_MODEL_NAME, model_kwargs={"device": "cuda"})
+    embeddings = HuggingFaceInstructEmbeddings(model_name=EMBEDDING_MODEL_NAME, model_kwargs={"device": "cuda", "streaming": True})
     # uncomment the following line if you used HuggingFaceEmbeddings in the ingest.py
     # embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
 
