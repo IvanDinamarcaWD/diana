@@ -125,6 +125,7 @@ def newPrompt(user_question: str):
         {"query": user_question},
     )
 
-    return qa_chain_response["result"]
+    yield qa_chain_response
+    #return qa_chain_response["result"]
     #yield qa_chain_response
    
