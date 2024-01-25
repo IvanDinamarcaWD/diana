@@ -24,6 +24,7 @@ def prompt(data: dict):
         async def data_generator_func():
             data_generator = newPrompt(question)
             for item in data_generator:
+                print(item)
                 # Yield each item serialized as JSON
                 yield item['result']
                 
