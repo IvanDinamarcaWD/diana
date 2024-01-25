@@ -18,15 +18,16 @@ app.add_middleware(
 )
 
 async def _generate(answer: str):
-	chunk_size = 10
-	num_chunks = (len(answer) + chunk_size - 1) // chunk_size
-	for i in range(num_chunks):
-		chunk_start = i * chunk_size
-		chunk_end = (i + 1) * chunk_size
-		chunk = answer[chunk_start:chunk_end]
-		response_body = f"{chunk}"
-		yield response_body.encode()
-		await asyncio.sleep(0.1)
+    print(answer)
+    chunk_size = 10
+    num_chunks = (len(answer) + chunk_size - 1) // chunk_size
+    for i in range(num_chunks):
+        chunk_start = i * chunk_size
+        chunk_end = (i + 1) * chunk_size
+        chunk = answer[chunk_start:chunk_end]
+        response_body = f"{chunk}"
+        yield response_body.encode()
+        await asyncio.sleep(0.1)
 
 
 
