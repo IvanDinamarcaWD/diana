@@ -133,6 +133,7 @@ async def newPrompt(user_question: str):
     except Exception as e:
         print(f"Caught exception: {e}")
     finally:
+        print("done")
         callback.done.set()
 
     await task
