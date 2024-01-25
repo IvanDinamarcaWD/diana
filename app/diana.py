@@ -14,9 +14,13 @@ from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler 
 from langchain.callbacks.manager import CallbackManager
 import time
 import asyncio
+from langchain.schema import HumanMessage
 from langchain.callbacks import AsyncIteratorCallbackHandler
 
-async def newPrompt(user_question: str, stream_it: AsyncIteratorCallbackHandler):
+async def newPrompt(user_question: str):
+
+    callback = AsyncIteratorCallbackHandler()
+
 
     from constants import (
         CHROMA_SETTINGS,
@@ -111,13 +115,29 @@ async def newPrompt(user_question: str, stream_it: AsyncIteratorCallbackHandler)
         retriever=retriever,
         return_source_documents=True,
         #verbose=True,
-        callbacks=[stream_it],
+        callbacks=[callback],
 
         #callbacks=callback_manager,
         chain_type_kwargs={
             "prompt": prompt,
         },
     )
+
+    task = asyncio.create_task(
+        model.agenerate(messages=[[HumanMessage(content=user_question)]])
+    )
+
+    try:
+        async for token in callback.aiter():
+            yield token
+    except Exception as e:
+        print(f"Caught exception: {e}")
+    finally:
+        callback.done.set()
+
+    await task
+
+    return
 
 
     qa_chain_response = qa.stream(
@@ -128,9 +148,3 @@ async def newPrompt(user_question: str, stream_it: AsyncIteratorCallbackHandler)
     return response
 
    
-
-async def create_gen(text: str, stream_it: AsyncIteratorCallbackHandler):
-    task = asyncio.create_task(newPrompt(text, stream_it))
-    async for token in stream_it.aiter():
-        yield token
-    await task
