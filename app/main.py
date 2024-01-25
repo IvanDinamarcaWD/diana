@@ -23,9 +23,7 @@ app.add_middleware(
 def prompt(data: dict):
     try:
         question = data["message"]
-
-        stream_it = AsyncIteratorCallbackHandler()
-        gen = create_gen(question, stream_it)
+        gen = newPrompt(question)
 
         return StreamingResponse(gen, media_type="text/event-stream")
         #answer = newPrompt(question)
