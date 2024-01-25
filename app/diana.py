@@ -124,5 +124,5 @@ def newPrompt(user_question: str):
     qa_chain_response = qa.stream(
         {"query": user_question},
     )
-    return qa_chain_response
+    yield qa_chain_response
    
