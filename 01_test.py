@@ -13,8 +13,7 @@ import os
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler  # for streaming response
 from langchain.callbacks.manager import CallbackManager
 import time
-from colorama import Fore, Style,init
-init()
+
 
 from constants import (
     CHROMA_SETTINGS,
@@ -126,9 +125,7 @@ while True:
     qa_chain_response = qa.stream(
     {"query": user_question},
     )
-    print(Fore.GREEN)
     for i in qa_chain_response:
         end_time = time.time()
         elapsed_time = round(end_time - start_time, 2)
         print(elapsed_time)
-    print(Style.RESET_ALL)
