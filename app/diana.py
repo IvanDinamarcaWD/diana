@@ -70,9 +70,9 @@ async def newPrompt(user_question: str, stream_it: AsyncIteratorCallbackHandler)
 
     prompt_template = B_INST + SYSTEM_PROMPT + instruction + E_INST
     prompt = PromptTemplate(input_variables=["context", "question"], template=prompt_template)
-    memory = ConversationBufferMemory(input_key="question", memory_key="history")
+    #memory = ConversationBufferMemory(input_key="question", memory_key="history")
 
-    embeddings = HuggingFaceInstructEmbeddings(model_name=EMBEDDING_MODEL_NAME, model_kwargs={"device": "cuda", "streaming": True})
+    embeddings = HuggingFaceInstructEmbeddings(model_name=EMBEDDING_MODEL_NAME, model_kwargs={"device": "cuda"})
     # uncomment the following line if you used HuggingFaceEmbeddings in the ingest.py
     # embeddings = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL_NAME)
 
@@ -83,7 +83,7 @@ async def newPrompt(user_question: str, stream_it: AsyncIteratorCallbackHandler)
     )
     retriever = db.as_retriever()
 
-    callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+    #callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
     streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
 
     pipe = pipeline("text-generation",
