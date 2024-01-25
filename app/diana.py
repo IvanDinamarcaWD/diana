@@ -14,9 +14,14 @@ from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler 
 from langchain.callbacks.manager import CallbackManager
 import time
 import asyncio
+from langchain.schema import HumanMessage
 from langchain.callbacks import AsyncIteratorCallbackHandler
+from transformers import TextIteratorStreamer
 
-async def newPrompt(user_question: str, stream_it: AsyncIteratorCallbackHandler):
+async def newPrompt(user_question: str):
+
+    callback = AsyncIteratorCallbackHandler()
+
 
     from constants import (
         CHROMA_SETTINGS,
@@ -84,7 +89,10 @@ async def newPrompt(user_question: str, stream_it: AsyncIteratorCallbackHandler)
     retriever = db.as_retriever()
 
     #callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
-    streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
+    #streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
+
+    streamer = TextIteratorStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
+
 
     pipe = pipeline("text-generation",
         model=model,
@@ -111,7 +119,7 @@ async def newPrompt(user_question: str, stream_it: AsyncIteratorCallbackHandler)
         retriever=retriever,
         return_source_documents=True,
         #verbose=True,
-        callbacks=[stream_it],
+        callbacks=[callback],
 
         #callbacks=callback_manager,
         chain_type_kwargs={
@@ -119,13 +127,30 @@ async def newPrompt(user_question: str, stream_it: AsyncIteratorCallbackHandler)
         },
     )
 
-    response = await qa.acall(user_question)
-    return response
+    yield qa.run(user_question)
+
+    #task = asyncio.create_task(
+    #    qa.acall(user_question)
+    #)
+
+    #try:
+    #    async for token in callback.aiter():
+    #        yield token
+    #except Exception as e:
+    #    print(f"Caught exception: {e}")
+    #finally:
+    #    print("done")
+    #    callback.done.set()
+
+    #await  task
+
+
+
+    #qa_chain_response = qa.stream(
+    #    {"query": user_question},
+    #)
+    #return qa_chain_response
+    #response = await qa.acall(user_question)
+    #return response
 
    
-
-async def create_gen(text: str, stream_it: AsyncIteratorCallbackHandler):
-    task = asyncio.create_task(newPrompt(text, stream_it))
-    async for token in stream_it.aiter():
-        yield token
-    await task

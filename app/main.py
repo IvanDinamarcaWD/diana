@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
-from diana import newPrompt, create_gen
+from diana import newPrompt
 from typing import Dict, Iterator
 import asyncio
 import time
@@ -23,9 +23,7 @@ app.add_middleware(
 def prompt(data: dict):
     try:
         question = data["message"]
-
-        stream_it = AsyncIteratorCallbackHandler()
-        gen = create_gen(question, stream_it)
+        gen = newPrompt(question)
 
         return StreamingResponse(gen, media_type="text/event-stream")
         #answer = newPrompt(question)
