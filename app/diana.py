@@ -124,12 +124,12 @@ async def newPrompt(user_question: str):
     )
 
     task = asyncio.create_task(
-        qa.arun(input=user_question)
+        qa.acall(user_question)
     )
 
     try:
         async for token in callback.aiter():
-            yield token["result"]
+            yield token
     except Exception as e:
         print(f"Caught exception: {e}")
     finally:
