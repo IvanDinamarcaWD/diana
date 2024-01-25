@@ -111,26 +111,17 @@ async def newPrompt(user_question: str, stream_it: AsyncIteratorCallbackHandler)
         retriever=retriever,
         return_source_documents=True,
         #verbose=True,
-        callbacks=callback_manager,
+        callbacks=[stream_it],
+
+        #callbacks=callback_manager,
         chain_type_kwargs={
             "prompt": prompt,
         },
     )
 
-    #user_question = "¿Qué sabes del documento?"
-    #start_time = 0
-    #user_question = input("\nEnter a query: ")
-
     response = await qa.acall(user_question)
     return response
 
-    #qa_chain_response = qa.stream(
-    #    {"query": user_question},
-    #)
-
-    #yield qa_chain_response
-    #return qa_chain_response["result"]
-    #yield qa_chain_response
    
 
 async def create_gen(text: str, stream_it: AsyncIteratorCallbackHandler):
