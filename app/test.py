@@ -19,7 +19,6 @@ async def _generate(answer: str):
 		chunk_end = (i + 1) * chunk_size
 		chunk = answer[chunk_start:chunk_end]
 		response_body = f"{chunk}"
-		print(response_body)
 		yield response_body.encode()
 		await asyncio.sleep(0.1)
 
@@ -27,6 +26,8 @@ async def _generate(answer: str):
 if __name__ == "__main__":
     data_generator = newPrompt('hola, responde en dos palabras')
 
-    _generate(data_generator)
+    
+    res = _generate(data_generator)
+    print(res)
     #for i in data_generator:
     #    print(next(i))
