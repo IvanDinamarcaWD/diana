@@ -16,7 +16,7 @@ import time
 import asyncio
 from langchain.callbacks import AsyncIteratorCallbackHandler
 
-async def newPrompt(user_question: str):
+async def newPrompt(user_question: str, stream_it: AsyncIteratorCallbackHandler):
 
     from constants import (
         CHROMA_SETTINGS,
