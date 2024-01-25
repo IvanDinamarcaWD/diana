@@ -129,7 +129,7 @@ async def newPrompt(user_question: str):
 
     try:
         async for token in callback.aiter():
-            yield token
+            yield token["result"]
     except Exception as e:
         print(f"Caught exception: {e}")
     finally:
