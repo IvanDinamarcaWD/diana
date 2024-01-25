@@ -1,5 +1,6 @@
 import random
 from typing import Dict, Any, Iterator
+from diana import newPrompt
 
 def generate_random_data() -> Iterator[Dict[str, Any]]:
     while True:
@@ -12,7 +13,7 @@ def generate_random_data() -> Iterator[Dict[str, Any]]:
 
 # Example usage:
 if __name__ == "__main__":
-    data_generator = generate_random_data()
+    data_generator = newPrompt('hola, responde en dos palabras')
 
-    for _ in range(5):
-        print(next(data_generator)['key1'])
+    for _ in data_generator:
+        print(next(data_generator)['result'])
