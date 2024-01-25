@@ -21,18 +21,18 @@ def prompt(data: dict):
     try:
         question = data["message"]
 
-        async def data_generator_func():
-            data_generator = newPrompt(question)
-            for item in data_generator:
-                print(item)
-                # Yield each item serialized as JSON
-                yield item['result']
+        data_generator = newPrompt(question)
+        #async def data_generator_func():
+        #    for item in data_generator:
+        #        print(item)
+        #        # Yield each item serialized as JSON
+        #        yield item['result']
                 
         #def generate():
         #    for _ in range(5):  # Simulate 5 chunks of fake data
         #        time.sleep(1)  # Simulate some processing time
         #        yield f"Received message: {message}\n".encode("utf-8")
-        return StreamingResponse(data_generator_func())
+        return StreamingResponse(newPrompt(question), content_type="text/event-stream")
     
     except KeyError:
         raise HTTPException(status_code=400, detail="Message not provided in request.")
