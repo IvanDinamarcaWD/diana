@@ -124,7 +124,7 @@ async def newPrompt(user_question: str):
     )
 
     task = asyncio.create_task(
-        qa.agenerate(messages=[[HumanMessage(content=user_question)]])
+        qa.arun(input=user_question)
     )
 
     try:
