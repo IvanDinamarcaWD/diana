@@ -28,7 +28,8 @@ def prompt(data: dict):
                 print(next(item))
                 # Yield each item serialized as JSON
                 #yield next(item['result'])
-                
+
+        data_generator_func()
         def generate():
             for _ in range(5):  # Simulate 5 chunks of fake data
                 time.sleep(1)  # Simulate some processing time
