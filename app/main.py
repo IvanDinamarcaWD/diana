@@ -3,8 +3,9 @@ from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from diana import newPrompt
 from typing import Dict, Iterator
+import asyncio
+import time
 
-#import time
 app = FastAPI()
 
 # Configure CORS middleware
@@ -16,22 +17,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+async def _generate(answer: str):
+	chunk_size = 10
+	num_chunks = (len(answer) + chunk_size - 1) // chunk_size
+	for i in range(num_chunks):
+		chunk_start = i * chunk_size
+		chunk_end = (i + 1) * chunk_size
+		chunk = answer[chunk_start:chunk_end]
+		response_body = f"{chunk}"
+		yield response_body.encode()
+		await asyncio.sleep(0.1)
+
+
+
 @app.post("/prompt")
 def prompt(data: dict):
     try:
         question = data["message"]
+        answer = newPrompt(question)
+        return StreamingResponse(_generate(answer), media_type="text/event-stream")
 
-        async def data_generator_func():
-            data_generator = newPrompt(question)
-            for item in data_generator:
-                # Yield each item serialized as JSON
-                yield item['result']
-                
-        #def generate():
-        #    for _ in range(5):  # Simulate 5 chunks of fake data
-        #        time.sleep(1)  # Simulate some processing time
-        #        yield f"Received message: {message}\n".encode("utf-8")
-        return StreamingResponse(data_generator_func())
-    
     except KeyError:
         raise HTTPException(status_code=400, detail="Message not provided in request.")
