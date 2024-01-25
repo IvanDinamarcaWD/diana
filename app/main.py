@@ -24,9 +24,9 @@ def prompt(data: dict):
         async def data_generator_func():
             data_generator = newPrompt(question)
             for item in data_generator:
-                print(item)
+                
                 # Yield each item serialized as JSON
-                yield item['result']
+                yield next(item['result'])
                 
         #def generate():
         #    for _ in range(5):  # Simulate 5 chunks of fake data
