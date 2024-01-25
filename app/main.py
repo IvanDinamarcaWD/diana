@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
-from diana import newPrompt, create_gen
+from diana import newPrompt
 from typing import Dict, Iterator
 import asyncio
 import time
