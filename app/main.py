@@ -32,7 +32,7 @@ def prompt(data: dict):
         #    for _ in range(5):  # Simulate 5 chunks of fake data
         #        time.sleep(1)  # Simulate some processing time
         #        yield f"Received message: {message}\n".encode("utf-8")
-        return StreamingResponse(newPrompt(question), media_type="text/event-stream")
+        return StreamingResponse(newPrompt(question))
     
     except KeyError:
         raise HTTPException(status_code=400, detail="Message not provided in request.")
