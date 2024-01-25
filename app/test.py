@@ -19,6 +19,7 @@ async def _generate(answer: str):
 		chunk_end = (i + 1) * chunk_size
 		chunk = answer[chunk_start:chunk_end]
 		response_body = f"{chunk}"
+		print(response_body)
 		yield response_body.encode()
 		await asyncio.sleep(0.1)
 
