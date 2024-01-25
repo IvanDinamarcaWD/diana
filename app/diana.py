@@ -40,7 +40,6 @@ async def newPrompt(user_question: str, stream_it: AsyncIteratorCallbackHandler)
         MODEL_ID,
         low_cpu_mem_usage=True,
         device_map="cuda:0",
-        callbacks=[stream_it],
         token=access_token
     )
 
@@ -112,6 +111,7 @@ async def newPrompt(user_question: str, stream_it: AsyncIteratorCallbackHandler)
         retriever=retriever,
         return_source_documents=True,
         #verbose=True,
+        callbacks=[stream_it],
 
         #callbacks=callback_manager,
         chain_type_kwargs={
