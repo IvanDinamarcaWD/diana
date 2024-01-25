@@ -16,6 +16,7 @@ import time
 import asyncio
 from langchain.schema import HumanMessage
 from langchain.callbacks import AsyncIteratorCallbackHandler
+from transformers import TextIteratorStreamer
 
 async def newPrompt(user_question: str):
 
@@ -88,7 +89,10 @@ async def newPrompt(user_question: str):
     retriever = db.as_retriever()
 
     #callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
-    streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
+    #streamer = TextStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
+
+    streamer = TextIteratorStreamer(tokenizer, skip_prompt=True, skip_special_tokens=True)
+
 
     pipe = pipeline("text-generation",
         model=model,
@@ -123,20 +127,22 @@ async def newPrompt(user_question: str):
         },
     )
 
-    task = asyncio.create_task(
-        qa.acall(user_question)
-    )
+    yield qa.run(user_question)
 
-    try:
-        async for token in callback.aiter():
-            yield token
-    except Exception as e:
-        print(f"Caught exception: {e}")
-    finally:
-        print("done")
-        callback.done.set()
+    #task = asyncio.create_task(
+    #    qa.acall(user_question)
+    #)
 
-    await task
+    #try:
+    #    async for token in callback.aiter():
+    #        yield token
+    #except Exception as e:
+    #    print(f"Caught exception: {e}")
+    #finally:
+    #    print("done")
+    #    callback.done.set()
+
+    #await  task
 
 
 
