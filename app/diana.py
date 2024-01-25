@@ -119,6 +119,11 @@ async def newPrompt(user_question: str, stream_it: AsyncIteratorCallbackHandler)
         },
     )
 
+
+    qa_chain_response = await qa.stream(
+        {"query": user_question},
+    )
+    return qa_chain_response
     response = await qa.acall(user_question)
     return response
 
