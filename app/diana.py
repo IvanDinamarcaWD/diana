@@ -13,10 +13,10 @@ import os
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler  # for streaming response
 from langchain.callbacks.manager import CallbackManager
 import time
+import asyncio
+from langchain.callbacks import AsyncIteratorCallbackHandler
 
-
-
-def newPrompt(user_question: str):
+async def newPrompt(user_question: str):
 
     from constants import (
         CHROMA_SETTINGS,
@@ -121,11 +121,20 @@ def newPrompt(user_question: str):
     #start_time = 0
     #user_question = input("\nEnter a query: ")
 
-    qa_chain_response = qa.stream(
-        {"query": user_question},
-    )
+    response = await qa.acall(user_question)
+    return response
 
-    yield qa_chain_response
+    #qa_chain_response = qa.stream(
+    #    {"query": user_question},
+    #)
+
+    #yield qa_chain_response
     #return qa_chain_response["result"]
     #yield qa_chain_response
    
+
+async def create_gen(text: str, stream_it: AsyncIteratorCallbackHandler):
+    task = asyncio.create_task(newPrompt(text, stream_it))
+    async for token in stream_it.aiter():
+        yield token
+    await task
