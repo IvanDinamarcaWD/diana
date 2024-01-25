@@ -16,4 +16,4 @@ if __name__ == "__main__":
     data_generator = newPrompt('hola, responde en dos palabras')
 
     for _ in data_generator:
-        print(next(data_generator)['result'])
+        print(next(data_generator))
