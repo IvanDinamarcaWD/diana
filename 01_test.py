@@ -127,7 +127,8 @@ while True:
     for i in qa_chain_response:
         end_time = time.time()
 
-        elapsed_time = end_time - start_time
+        #elapsed_time = end_time - start_time
+        elapsed_time = round(end_time - start_time, 2)
         print(elapsed_time)
         #print("TOKEN", i["result"])
 
