@@ -58,7 +58,7 @@ DOCUMENT_MAP = {
 }
 
 # Default Instructor Model
-#EMBEDDING_MODEL_NAME = "hkunlp/instructor-large"  # Uses 1.5 GB of VRAM (High Accuracy with lower VRAM usage)
+EMBEDDING_MODEL_NAME = "hkunlp/instructor-large"  # Uses 1.5 GB of VRAM (High Accuracy with lower VRAM usage)
 
 ####
 #### OTHER EMBEDDING MODEL OPTIONS
@@ -68,7 +68,7 @@ DOCUMENT_MAP = {
 # EMBEDDING_MODEL_NAME = "intfloat/e5-large-v2" # Uses 1.5 GB of VRAM (A little less accurate than instructor-large)
 # EMBEDDING_MODEL_NAME = "intfloat/e5-base-v2" # Uses 0.5 GB of VRAM (A good model for lower VRAM GPUs)
 # EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2" # Uses 0.2 GB of VRAM (Less accurate but fastest - only requires 150mb of vram)
-EMBEDDING_MODEL_NAME = "no_existe_xd" 
+# EMBEDDING_MODEL_NAME = "no_existe_xd" 
 
 ####
 #### MULTILINGUAL EMBEDDING MODELS
